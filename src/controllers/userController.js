@@ -41,16 +41,25 @@ const loginUser = async (req, res) => {
     const {email, password} = req.body;
     const user = await User.findOne({email});
     if(user && (await bcrypt.compare(password, user.password))){
+        const token = generateToken(user.id);
+        res.cookie("token", token,{
+            expires: new Date(Date.now() + 10 * 60 * 1000), // 30 days
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // HTTPS only in production
+            sameSite: "strict", // Prevent CSRF attacks
+        })
         return res.json({
-            name:user.name,
-            email:user.email,
-            email:user.email,
-            age:user.age,
-            gender:user.gender,
-            skills:user.skills,
-            profilePhoto:user.profilePhoto,
-            about:user.about,
-            token:generateToken(user.id),
+            message:"Login successful",
+            user:{
+                name:user.name,
+                email:user.email,
+                age:user.age,
+                gender:user.gender,
+                skills:user.skills,
+                profilePhoto:user.profilePhoto,
+                about:user.about,
+            }
+            
         })
     }else{
         return res.status(401).json({message:'Invalid Credentials'})
