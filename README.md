@@ -6,3 +6,4 @@
 - npm install nodemon --save-dev
 - setup layout structure and setup register and login functionalities and api routes
 - Setup CORS and pass cookie to frontend
+- Register Functionality and file storage
